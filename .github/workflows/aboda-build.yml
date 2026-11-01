@@ -6,6 +6,10 @@ on:
       - aboda/custom-wallpaper-features
   workflow_dispatch:
 
+concurrency:
+  group: aboda-custom-build
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
