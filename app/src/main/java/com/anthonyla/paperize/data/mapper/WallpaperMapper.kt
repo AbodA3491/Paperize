@@ -11,7 +11,11 @@ fun WallpaperEntity.toDomainModel(): Wallpaper = Wallpaper(
     fileName = fileName,
     dateModified = dateModified,
     displayOrder = displayOrder,
-    addedAt = addedAt
+    addedAt = addedAt,
+    scalingOverride = scalingOverride,
+    cropScale = cropScale,
+    cropOffsetX = cropOffsetX,
+    cropOffsetY = cropOffsetY
 )
 
 fun Wallpaper.toEntity(): WallpaperEntity = WallpaperEntity(
