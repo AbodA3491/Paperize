@@ -39,6 +39,22 @@ interface WallpaperDao {
     @Update
     suspend fun updateWallpaper(wallpaper: WallpaperEntity)
 
+    @Query("""
+        UPDATE wallpapers
+        SET scalingOverride = :scalingOverride,
+            cropScale = :cropScale,
+            cropOffsetX = :cropOffsetX,
+            cropOffsetY = :cropOffsetY
+        WHERE id = :wallpaperId
+    """)
+    suspend fun updateWallpaperPresentation(
+        wallpaperId: String,
+        scalingOverride: String?,
+        cropScale: Float,
+        cropOffsetX: Float,
+        cropOffsetY: Float
+    )
+
     @Query("UPDATE wallpapers SET displayOrder = :order WHERE id = :wallpaperId AND albumId = :albumId")
     suspend fun updateAlbumWallpaperOrder(albumId: String, wallpaperId: String, order: Int)
 
