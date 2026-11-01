@@ -7,6 +7,15 @@ import kotlinx.coroutines.flow.Flow
 interface WallpaperRepository {
     suspend fun getWallpaperById(wallpaperId: String): Wallpaper?
 
+    /** Save presentation overrides on this album entry only, never by source URI. */
+    suspend fun updateWallpaperPresentation(
+        wallpaperId: String,
+        scalingOverride: String?,
+        cropScale: Float,
+        cropOffsetX: Float,
+        cropOffsetY: Float
+    )
+
     /** Atomic, so concurrent wallpaper changes never receive the same item. */
     suspend fun getAndDequeueWallpaper(albumId: String, screenType: ScreenType): Wallpaper?
 
