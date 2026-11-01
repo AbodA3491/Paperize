@@ -10,7 +10,11 @@ data class Wallpaper(
     val fileName: String,
     val dateModified: Long,
     val displayOrder: Int = 0,
-    val addedAt: Long = System.currentTimeMillis()
+    val addedAt: Long = System.currentTimeMillis(),
+    val scalingOverride: String? = null,
+    val cropScale: Float = 1f,
+    val cropOffsetX: Float = 0f,
+    val cropOffsetY: Float = 0f
 ) {
     val displayFileName: String
         get() = Uri.decode(fileName).let { decoded ->
