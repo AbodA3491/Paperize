@@ -25,6 +25,22 @@ class WallpaperRepositoryImpl @Inject constructor(
     override suspend fun getWallpaperById(wallpaperId: String): Wallpaper? =
         wallpaperDao.getWallpaperById(wallpaperId)?.toDomainModel()
 
+    override suspend fun updateWallpaperPresentation(
+        wallpaperId: String,
+        scalingOverride: String?,
+        cropScale: Float,
+        cropOffsetX: Float,
+        cropOffsetY: Float
+    ) {
+        wallpaperDao.updateWallpaperPresentation(
+            wallpaperId = wallpaperId,
+            scalingOverride = scalingOverride,
+            cropScale = cropScale.coerceIn(1f, 4f),
+            cropOffsetX = cropOffsetX.coerceIn(-1f, 1f),
+            cropOffsetY = cropOffsetY.coerceIn(-1f, 1f)
+        )
+    }
+
     override suspend fun getAndDequeueWallpaper(albumId: String, screenType: ScreenType): Wallpaper? =
         wallpaperQueueDao.getAndDequeueWallpaper(albumId, screenType)?.toDomainModel()
 
