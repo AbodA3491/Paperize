@@ -27,5 +27,9 @@ fun Wallpaper.toEntity(): WallpaperEntity = WallpaperEntity(
     dateModified = dateModified,
     displayOrder = displayOrder,
     sourceType = if (folderId == null) "DIRECT" else "FOLDER",
-    addedAt = addedAt
+    addedAt = addedAt,
+    scalingOverride = scalingOverride,
+    cropScale = cropScale.coerceIn(1f, 4f),
+    cropOffsetX = cropOffsetX.coerceIn(-1f, 1f),
+    cropOffsetY = cropOffsetY.coerceIn(-1f, 1f)
 )
