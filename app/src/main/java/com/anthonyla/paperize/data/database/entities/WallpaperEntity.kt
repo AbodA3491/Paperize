@@ -1,5 +1,6 @@
 package com.anthonyla.paperize.data.database.entities
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
@@ -49,7 +50,7 @@ data class WallpaperEntity(
     // Per-library-item presentation. Each album entry has its own id, so the same source
     // image imported into Home and Lock albums can be customized independently.
     val scalingOverride: String? = null,
-    val cropScale: Float = 1f,
-    val cropOffsetX: Float = 0f,
-    val cropOffsetY: Float = 0f,
+    @ColumnInfo(defaultValue = "1.0") val cropScale: Float = 1f,
+    @ColumnInfo(defaultValue = "0.0") val cropOffsetX: Float = 0f,
+    @ColumnInfo(defaultValue = "0.0") val cropOffsetY: Float = 0f,
 )
