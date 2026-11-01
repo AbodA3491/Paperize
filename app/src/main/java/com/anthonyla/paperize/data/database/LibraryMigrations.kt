@@ -39,4 +39,12 @@ val LIBRARY_MIGRATIONS: Array<Migration> = (1..3).map { version ->
             }
         }
     }
+    object : Migration(4, 5) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("ALTER TABLE wallpapers ADD COLUMN scalingOverride TEXT")
+            db.execSQL("ALTER TABLE wallpapers ADD COLUMN cropScale REAL NOT NULL DEFAULT 1.0")
+            db.execSQL("ALTER TABLE wallpapers ADD COLUMN cropOffsetX REAL NOT NULL DEFAULT 0.0")
+            db.execSQL("ALTER TABLE wallpapers ADD COLUMN cropOffsetY REAL NOT NULL DEFAULT 0.0")
+        }
+    }
 }.toTypedArray()
