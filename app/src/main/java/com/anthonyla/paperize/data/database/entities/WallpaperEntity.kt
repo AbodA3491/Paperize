@@ -45,4 +45,11 @@ data class WallpaperEntity(
 
     // Legacy: Paperize only stores images.
     val mediaType: String = "IMAGE",
+
+    // Per-library-item presentation. Each album entry has its own id, so the same source
+    // image imported into Home and Lock albums can be customized independently.
+    val scalingOverride: String? = null,
+    val cropScale: Float = 1f,
+    val cropOffsetX: Float = 0f,
+    val cropOffsetY: Float = 0f,
 )
