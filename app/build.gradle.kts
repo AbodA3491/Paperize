@@ -31,11 +31,11 @@ android {
     sourceSets.getByName("androidTest").assets.directories.add("$projectDir/schemas")
 
     defaultConfig {
-        applicationId = "com.anthonyla.paperize"
+        applicationId = "com.aboda.paperize"
         minSdk = 31
         targetSdk = 36
-        versionCode = 58
-        versionName = "4.2.1"
+        versionCode = 59
+        versionName = "4.2.1-aboda.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
