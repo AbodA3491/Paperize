@@ -85,8 +85,8 @@
   <string name="make_the_colors_grayscale">Make the colors grayscale</string>
   <string name="double_tap_to_change">Double-Tap to Change</string>
   <string name="double_tap_wallpaper_to_change_it">Double-tap wallpaper to change it</string>
-  <string name="change_on_screen_off">Change on Screen Off</string>
-  <string name="change_wallpaper_when_screen_turns_off">Change wallpaper when screen turns off</string>
+  <string name="change_on_screen_off">Change on Screen On</string>
+  <string name="change_wallpaper_when_screen_turns_off">Change wallpaper when screen turns on</string>
   <string name="parallax_effect">Parallax Effect</string>
   <string name="wallpaper_moves_with_screen_scroll">Swipe between home-screen pages to move the wallpaper (launcher support required)</string>
   <string name="live_wallpaper_name">Paperize Live Wallpaper</string>
