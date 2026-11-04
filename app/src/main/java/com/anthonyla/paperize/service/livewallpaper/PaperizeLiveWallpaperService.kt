@@ -114,10 +114,10 @@ class PaperizeLiveWallpaperService : GLWallpaperService() {
             }
         }
 
-        private val screenOffReceiver = object : BroadcastReceiver() {
+        private val screenOnReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                if (intent?.action == Intent.ACTION_SCREEN_OFF) {
-                    handleScreenOff()
+                if (intent?.action == Intent.ACTION_SCREEN_ON) {
+                    handleScreenOn()
                 }
             }
         }
@@ -150,11 +150,11 @@ class PaperizeLiveWallpaperService : GLWallpaperService() {
                 ContextCompat.RECEIVER_NOT_EXPORTED
             )
 
-            val screenOffFilter = IntentFilter(Intent.ACTION_SCREEN_OFF)
+            val screenOnFilter = IntentFilter(Intent.ACTION_SCREEN_ON)
             ContextCompat.registerReceiver(
                 applicationContext,
-                screenOffReceiver,
-                screenOffFilter,
+                screenOnReceiver,
+                screenOnFilter,
                 ContextCompat.RECEIVER_NOT_EXPORTED
             )
         }
@@ -295,7 +295,7 @@ class PaperizeLiveWallpaperService : GLWallpaperService() {
                 Log.e(TAG, "Error unregistering reload receiver", e)
             }
             try {
-                applicationContext.unregisterReceiver(screenOffReceiver)
+                applicationContext.unregisterReceiver(screenOnReceiver)
             } catch (e: Exception) {
                 Log.e(TAG, "Error unregistering screen-off receiver", e)
             }
@@ -325,11 +325,11 @@ class PaperizeLiveWallpaperService : GLWallpaperService() {
             }
         }
 
-        private fun handleScreenOff() {
+        private fun handleScreenOn() {
             engineScope.launch {
                 val settings = settingsRepository.getScheduleSettings()
                 if (settings.liveEffects.enableChangeOnScreenOff) {
-                    Log.d(TAG, "Screen off - changing wallpaper")
+                    Log.d(TAG, "Screen on - changing wallpaper")
                     renderController.forceReloadCurrentArtwork()
                 }
             }
