@@ -1,0 +1,42 @@
+name: Paperize custom debug APK
+
+on:
+  push:
+    branches:
+      - aboda/custom-wallpaper-features
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+      - uses: android-actions/setup-android@v3
+      - name: Install Android SDK
+        run: |
+          yes | sdkmanager --licenses >/dev/null
+          sdkmanager "platforms;android-37" "build-tools;37.0.0"
+      - name: Run unit tests
+        run: ./gradlew --no-daemon testDebugUnitTest
+      - name: Build debug APK
+        run: ./gradlew --no-daemon assembleDebug
+      - name: Package debug APK
+        run: |
+          mkdir -p release
+          cp app/build/outputs/apk/debug/*.apk release/Paperize-custom-debug.apk
+          cd release
+          zip -j debug.zip Paperize-custom-debug.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: paperize-debug
+          path: release/debug.zip
+          if-no-files-found: error
+          retention-days: 14
