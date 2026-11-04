@@ -238,18 +238,6 @@ fun WallpaperScreen(
         }
 
         HorizontalDivider(modifier = Modifier.padding(vertical = AppSpacing.small))
-        if (wallpaperMode == WallpaperMode.STATIC) {
-            SettingSwitchItem(
-                title = stringResource(R.string.horizontal_wallpaper_scrolling),
-                description = stringResource(R.string.horizontal_wallpaper_scrolling_description),
-                checked = scheduleSettings.homeScrollingEnabled,
-                onCheckedChange = { enabled ->
-                    updateSettingsImmediate(
-                        scheduleSettings.copy(homeScrollingEnabled = enabled)
-                    )
-                }
-            )
-        }
 
         if (wallpaperMode == WallpaperMode.STATIC) {
             CurrentWallpaperPreview(
