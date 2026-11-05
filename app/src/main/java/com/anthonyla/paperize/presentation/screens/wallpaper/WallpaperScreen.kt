@@ -75,8 +75,13 @@ fun WallpaperScreen(
 
     // Keep an immediate local draft so a slider value waiting for the ViewModel debounce
     // is included in a switch or other setting changed before that debounce expires.
-    LaunchedEffect(persistedScheduleSettings) {
-        scheduleSettings = persistedScheduleSettings
+    LaunchedEffect(persistedScheduleSettings, wallpaperMode) {
+        val normalized = if (wallpaperMode == WallpaperMode.STATIC &&
+            persistedScheduleSettings.homeEnabled && persistedScheduleSettings.lockEnabled &&
+            !persistedScheduleSettings.separateSchedules
+        ) persistedScheduleSettings.copy(separateSchedules = true) else persistedScheduleSettings
+        scheduleSettings = normalized
+        if (normalized != persistedScheduleSettings) onUpdateScheduleSettings(normalized)
     }
 
     fun updateSettingsDebounced(newSettings: ScheduleSettings) {
@@ -163,17 +168,6 @@ fun WallpaperScreen(
                 onClick = { albumPickerScreen = ScreenType.LIVE }
             )
         }
-        if (wallpaperMode == WallpaperMode.STATIC && scheduleSettings.enableChanger && homeEnabled && lockEnabled) {
-            SettingSwitchItem(
-                title = stringResource(R.string.individual_scheduling),
-                description = stringResource(R.string.show_interval_sliders),
-                checked = scheduleSettings.separateSchedules,
-                onCheckedChange = { enabled ->
-                    updateSettingsImmediate(scheduleSettings.copy(separateSchedules = enabled))
-                }
-            )
-        }
-
         val hasAlbumSelected = scheduleSettings.activeScreens(wallpaperMode).isNotEmpty()
         val allRequiredAlbumsSelected = scheduleSettings.hasRequiredAlbums(wallpaperMode)
 
