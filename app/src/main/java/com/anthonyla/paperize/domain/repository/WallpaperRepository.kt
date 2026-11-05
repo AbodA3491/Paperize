@@ -16,6 +16,9 @@ interface WallpaperRepository {
         cropOffsetY: Float
     )
 
+    /** Replace only this album entry's source with an edited copy; the original file is untouched. */
+    suspend fun updateWallpaperUri(wallpaperId: String, uri: String)
+
     /** Atomic, so concurrent wallpaper changes never receive the same item. */
     suspend fun getAndDequeueWallpaper(albumId: String, screenType: ScreenType): Wallpaper?
 
