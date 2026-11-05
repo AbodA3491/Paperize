@@ -60,6 +60,14 @@ class WallpaperViewViewModel @Inject constructor(
         }
     }
 
+    fun saveEditedImage(uri: String) {
+        viewModelScope.launch {
+            wallpaperRepository.updateWallpaperUri(route.wallpaperId, uri)
+            _wallpaper.value = wallpaperRepository.getWallpaperById(route.wallpaperId)
+            _saveCompleted.value = true
+        }
+    }
+
     fun consumeSaveCompleted() {
         _saveCompleted.value = false
     }
