@@ -64,7 +64,7 @@ class WallpaperScheduler @Inject constructor(
                 }
             }
             .build()
-        workManager.cancelUniqueWork(workName(screenType))
+        if (!onlyIfNotScheduled) workManager.cancelUniqueWork(workName(screenType))
         workManager.enqueueUniquePeriodicWork(workName(screenType), policy(onlyIfNotScheduled), workRequest)
         Log.d(TAG, "Scheduled $screenType wallpaper change every $interval minutes")
     }
