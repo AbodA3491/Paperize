@@ -5,6 +5,8 @@ package com.anthonyla.paperize.service.worker
 import android.content.Context
 import android.util.Log
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequest
 import androidx.work.Operation
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
@@ -30,6 +32,7 @@ class WallpaperSchedulerTest {
     private val workManager = mockk<WorkManager>()
     private val operation = mockk<Operation>()
     private val enqueued = mutableListOf<Triple<String, ExistingPeriodicWorkPolicy, PeriodicWorkRequest>>()
+    private val oneTimeEnqueued = mutableListOf<Triple<String, ExistingWorkPolicy, OneTimeWorkRequest>>()
     private val cancelled = mutableListOf<String>()
     private lateinit var scheduler: WallpaperScheduler
 
@@ -45,6 +48,14 @@ class WallpaperSchedulerTest {
         }
         every { workManager.cancelUniqueWork(any()) } answers {
             cancelled += firstArg<String>()
+            operation
+        }
+        every { workManager.cancelUniquePeriodicWork(any()) } answers {
+            cancelled += firstArg<String>()
+            operation
+        }
+        every { workManager.enqueueUniqueWork(any(), any<ExistingWorkPolicy>(), any<OneTimeWorkRequest>()) } answers {
+            oneTimeEnqueued += Triple(firstArg(), secondArg(), thirdArg())
             operation
         }
         scheduler = WallpaperScheduler(context)
@@ -102,15 +113,12 @@ class WallpaperSchedulerTest {
     }
 
     @Test
-    fun `manual reset delay uses the same minimum as the periodic interval`() {
-        val before = System.currentTimeMillis()
+    fun `static one-minute schedule uses a delayed one-time request`() {
         scheduler.scheduleWallpaperChange(ScreenType.HOME, 1, resetInterval = true)
-
-        val request = enqueued.single().third
-        val minimumMillis = TimeUnit.MINUTES.toMillis(15)
-        assertEquals(minimumMillis, request.workSpec.intervalDuration)
-        assertTrue(request.workSpec.calculateNextRunTime() >= before + minimumMillis)
-        assertTrue(request.workSpec.calculateNextRunTime() <= System.currentTimeMillis() + minimumMillis)
+        val (name, policy, request) = oneTimeEnqueued.single()
+        assertEquals(Constants.WORK_NAME_HOME, name)
+        assertEquals(ExistingWorkPolicy.REPLACE, policy)
+        assertEquals(TimeUnit.MINUTES.toMillis(1), request.workSpec.initialDelay)
     }
 
     @Test
