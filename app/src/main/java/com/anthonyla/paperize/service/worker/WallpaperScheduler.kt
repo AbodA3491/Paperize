@@ -4,9 +4,11 @@ import android.content.Context
 import android.util.Log
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.ExistingWorkPolicy
+import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import androidx.work.workDataOf
 import androidx.work.workDataOf
 import com.anthonyla.paperize.core.ScreenType
 import com.anthonyla.paperize.core.WallpaperMode
@@ -30,27 +32,38 @@ class WallpaperScheduler @Inject constructor(
     private val workManager by lazy { WorkManager.getInstance(context) }
     private val mutex = Mutex()
 
-    /** [intervalMinutes] is raised to WorkManager's 15-minute minimum. */
+    /** Static intervals below 15 minutes use a chained one-time request; periodic WorkManager
+     * requests are limited to 15 minutes. Each screen has its own unique chain.
+     */
     fun scheduleWallpaperChange(
         screenType: ScreenType,
         intervalMinutes: Int,
         resetInterval: Boolean = false,
         onlyIfNotScheduled: Boolean = false
     ) {
-        val interval = intervalMinutes.toLong().coerceAtLeast(Constants.MIN_INTERVAL_MINUTES.toLong())
+        val interval = intervalMinutes.toLong().coerceAtLeast(Constants.MIN_LIVE_INTERVAL_MINUTES.toLong())
+        if (interval < Constants.MIN_INTERVAL_MINUTES) {
+            val request = OneTimeWorkRequestBuilder<WallpaperChangeWorker>()
+                .setInputData(workDataOf(Constants.EXTRA_SCREEN_TYPE to screenType.name))
+                .setInitialDelay(interval, TimeUnit.MINUTES)
+                .build()
+            workManager.enqueueUniqueWork(
+                workName(screenType),
+                if (onlyIfNotScheduled) ExistingWorkPolicy.KEEP else ExistingWorkPolicy.REPLACE,
+                request
+            )
+            Log.d(TAG, "Scheduled chained $screenType wallpaper change every $interval minutes")
+            return
+        }
         val workRequest = PeriodicWorkRequestBuilder<WallpaperChangeWorker>(interval, TimeUnit.MINUTES)
             .setInputData(workDataOf(Constants.EXTRA_SCREEN_TYPE to screenType.name))
             .apply {
-                // New periodic work otherwise runs immediately. Unlike an initial delay, this
-                // one-run deadline also survives unrelated UPDATE requests from settings edits.
                 if (resetInterval) {
                     setNextScheduleTimeOverride(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(interval))
                 }
             }
             .build()
-
-        // Preserve the existing work and explicitly move only the next run after a manual change.
-        // Replacing periodic work starts a new first period, which can otherwise run immediately.
+        workManager.cancelUniqueWork(workName(screenType))
         workManager.enqueueUniquePeriodicWork(workName(screenType), policy(onlyIfNotScheduled), workRequest)
         Log.d(TAG, "Scheduled $screenType wallpaper change every $interval minutes")
     }
