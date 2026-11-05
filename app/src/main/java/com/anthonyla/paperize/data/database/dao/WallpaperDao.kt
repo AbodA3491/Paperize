@@ -55,6 +55,9 @@ interface WallpaperDao {
         cropOffsetY: Float
     )
 
+    @Query("UPDATE wallpapers SET uri = :uri, dateModified = :dateModified WHERE id = :wallpaperId")
+    suspend fun updateWallpaperUri(wallpaperId: String, uri: String, dateModified: Long)
+
     @Query("UPDATE wallpapers SET displayOrder = :order WHERE id = :wallpaperId AND albumId = :albumId")
     suspend fun updateAlbumWallpaperOrder(albumId: String, wallpaperId: String, order: Int)
 
