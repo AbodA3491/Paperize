@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 class WallpaperViewViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     @param:ApplicationContext private val context: Context,
-    settingsRepository: SettingsRepository,
+    private val settingsRepository: SettingsRepository,
     private val wallpaperRepository: WallpaperRepository
 ) : ViewModel() {
     private val route = savedStateHandle.toRoute<WallpaperViewRoute>()
