@@ -43,7 +43,7 @@ class WallpaperScheduler @Inject constructor(
     ) {
         val interval = intervalMinutes.toLong().coerceAtLeast(Constants.MIN_LIVE_INTERVAL_MINUTES.toLong())
         if (interval < Constants.MIN_INTERVAL_MINUTES) {
-            workManager.cancelUniquePeriodicWork(workName(screenType))
+            workManager.cancelUniqueWork(workName(screenType))
             val request = OneTimeWorkRequestBuilder<WallpaperChangeWorker>()
                 .setInputData(workDataOf(Constants.EXTRA_SCREEN_TYPE to screenType.name))
                 .setInitialDelay(interval, TimeUnit.MINUTES)
@@ -106,7 +106,7 @@ class WallpaperScheduler @Inject constructor(
                 scheduleWallpaperChange(screen, interval, onlyIfNotScheduled = onlyIfNotScheduled)
             } else {
                 workManager.cancelUniqueWork(workName(screen))
-                workManager.cancelUniquePeriodicWork(workName(screen))
+                workManager.cancelUniqueWork(workName(screen))
             }
         }
         if (enabled) scheduleDailyAlbumRefresh(onlyIfNotScheduled) else workManager.cancelUniqueWork(Constants.WORK_NAME_REFRESH)
@@ -115,7 +115,7 @@ class WallpaperScheduler @Inject constructor(
     fun cancelAllWallpaperChanges() {
         ScreenType.entries.forEach {
             workManager.cancelUniqueWork(workName(it))
-            workManager.cancelUniquePeriodicWork(workName(it))
+            workManager.cancelUniqueWork(workName(it))
         }
         workManager.cancelUniqueWork(Constants.WORK_NAME_REFRESH)
     }
