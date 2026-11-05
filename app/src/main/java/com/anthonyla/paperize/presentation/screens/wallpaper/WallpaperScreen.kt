@@ -385,6 +385,24 @@ fun WallpaperScreen(
                 )
             }
         }
+        if (wallpaperMode == WallpaperMode.STATIC) {
+            val changeStaticWallpaperOnScreenOn =
+                (homeEnabled && scheduleSettings.homeEffects.enableChangeOnScreenOff) ||
+                    (lockEnabled && scheduleSettings.lockEffects.enableChangeOnScreenOff)
+            SettingSwitchItem(
+                title = "Change wallpaper when screen turns on",
+                description = "Automatically change the selected static wallpaper when the display wakes",
+                checked = changeStaticWallpaperOnScreenOn,
+                onCheckedChange = { enabled ->
+                    updateSettingsImmediate(
+                        scheduleSettings.copy(
+                            homeEffects = scheduleSettings.homeEffects.copy(enableChangeOnScreenOff = enabled),
+                            lockEffects = scheduleSettings.lockEffects.copy(enableChangeOnScreenOff = enabled)
+                        )
+                    )
+                }
+            )
+        }
         if (wallpaperMode == WallpaperMode.LIVE) {
             Card(
                 shape = MaterialTheme.shapes.medium,
