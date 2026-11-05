@@ -9,6 +9,6 @@
         <intent
             android:action="android.intent.action.VIEW"
             android:targetClass="com.anthonyla.paperize.service.shortcut.WallpaperShortcutActivity"
-            android:targetPackage="com.anthonyla.paperize" />
+            android:targetPackage="com.aboda.paperize" />
     </shortcut>
 </shortcuts>
