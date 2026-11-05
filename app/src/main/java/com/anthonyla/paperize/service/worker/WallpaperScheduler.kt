@@ -14,6 +14,7 @@ import com.anthonyla.paperize.core.ScreenType
 import com.anthonyla.paperize.core.WallpaperMode
 import com.anthonyla.paperize.core.constants.Constants
 import com.anthonyla.paperize.domain.model.ScheduleSettings
+import com.anthonyla.paperize.domain.repository.SettingsRepository
 import com.anthonyla.paperize.domain.model.usesVisibleLiveTimer
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.Duration
@@ -26,7 +27,8 @@ import kotlinx.coroutines.sync.withLock
 
 @Singleton
 class WallpaperScheduler @Inject constructor(
-    @param:ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context,
+    private val settingsRepository: SettingsRepository
 ) {
     // Lazy: the Application injects this before WorkManager can read its Hilt worker factory.
     private val workManager by lazy { WorkManager.getInstance(context) }
@@ -66,6 +68,21 @@ class WallpaperScheduler @Inject constructor(
         workManager.cancelUniqueWork(workName(screenType))
         workManager.enqueueUniquePeriodicWork(workName(screenType), policy(onlyIfNotScheduled), workRequest)
         Log.d(TAG, "Scheduled $screenType wallpaper change every $interval minutes")
+    }
+
+    /** Continue a short static interval only while its screen remains enabled. */
+    suspend fun scheduleShortIntervalContinuation(screenType: ScreenType) = mutex.withLock {
+        val settings = settingsRepository.getScheduleSettings()
+        val mode = settingsRepository.getWallpaperMode()
+        val interval = settings.intervalMinutes(screenType)
+        if (!settings.enableChanger || screenType !in settings.activeScreens(mode) ||
+            interval !in Constants.MIN_LIVE_INTERVAL_MINUTES until Constants.MIN_INTERVAL_MINUTES ||
+            screenType == ScreenType.LIVE) return@withLock
+        val request = OneTimeWorkRequestBuilder<WallpaperChangeWorker>()
+            .setInputData(workDataOf(Constants.EXTRA_SCREEN_TYPE to screenType.name))
+            .setInitialDelay(interval.toLong(), TimeUnit.MINUTES)
+            .build()
+        workManager.enqueueUniqueWork(workName(screenType), ExistingWorkPolicy.APPEND_OR_REPLACE, request)
     }
 
     /** Reset only the automatic schedules affected by a successful manual change. */
