@@ -21,7 +21,8 @@ class WallpaperChangeWorker @AssistedInject constructor(
     @Assisted workerParams: WorkerParameters,
     private val wallpaperController: WallpaperController,
     private val settingsRepository: SettingsRepository,
-    private val wallpaperChangeLock: WallpaperChangeLock
+    private val wallpaperChangeLock: WallpaperChangeLock,
+    private val wallpaperScheduler: WallpaperScheduler
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
@@ -34,6 +35,7 @@ class WallpaperChangeWorker @AssistedInject constructor(
             wallpaperChangeLock.mutex.withLock {
                 wallpaperController.change(screenType, settingsRepository.getScheduleSettings())
             }
+            wallpaperScheduler.scheduleShortIntervalContinuation(screenType)
             Log.d(TAG, "Wallpaper change completed successfully for $screenType")
             Result.success()
         } catch (e: CancellationException) {
