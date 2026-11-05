@@ -14,6 +14,7 @@ import com.anthonyla.paperize.core.ScreenType
 import com.anthonyla.paperize.core.WallpaperMode
 import com.anthonyla.paperize.core.constants.Constants
 import com.anthonyla.paperize.domain.model.ScheduleSettings
+import com.anthonyla.paperize.domain.repository.SettingsRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
@@ -30,6 +31,7 @@ import kotlinx.coroutines.test.runTest
 class WallpaperSchedulerTest {
     private val context = mockk<Context>()
     private val workManager = mockk<WorkManager>()
+    private val settingsRepository = mockk<SettingsRepository>()
     private val operation = mockk<Operation>()
     private val enqueued = mutableListOf<Triple<String, ExistingPeriodicWorkPolicy, PeriodicWorkRequest>>()
     private val oneTimeEnqueued = mutableListOf<Triple<String, ExistingWorkPolicy, OneTimeWorkRequest>>()
@@ -58,7 +60,7 @@ class WallpaperSchedulerTest {
             oneTimeEnqueued += Triple(firstArg(), secondArg(), thirdArg())
             operation
         }
-        scheduler = WallpaperScheduler(context)
+        scheduler = WallpaperScheduler(context, settingsRepository)
     }
 
     @After
