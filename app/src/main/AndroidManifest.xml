@@ -44,6 +44,13 @@
                 tools:node="remove" />
         </provider>
 
+        <!-- uCrop editor activity: required for the crop/rotate screen. -->
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
         <!-- Main Activity -->
         <activity
             android:name=".presentation.MainActivity"
