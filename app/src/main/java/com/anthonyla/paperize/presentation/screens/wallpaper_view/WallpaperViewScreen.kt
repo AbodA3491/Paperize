@@ -23,6 +23,7 @@ import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -70,9 +71,18 @@ fun WallpaperViewScreen(
     val wallpaperMode by viewModel.wallpaperMode.collectAsStateWithLifecycle()
     val wallpaper by viewModel.wallpaper.collectAsStateWithLifecycle()
     val saveCompleted by viewModel.saveCompleted.collectAsStateWithLifecycle()
+    val exportFolderUri by viewModel.exportFolderUri.collectAsStateWithLifecycle()
+    val exportStatus by viewModel.exportStatus.collectAsStateWithLifecycle()
     var showApplyDialog by rememberSaveable { mutableStateOf(false) }
     var scalingOverride by rememberSaveable { mutableStateOf<String?>(null) }
     val context = LocalContext.current
+    val exportFolderPicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
+        uri?.let {
+            val flags = android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION or android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+            runCatching { context.contentResolver.takePersistableUriPermission(it, flags) }
+            viewModel.setEditedImageExportFolder(it.toString())
+        }
+    }
     val editLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             UCrop.getOutput(result.data ?: return@rememberLauncherForActivityResult)?.let { editedUri ->
@@ -166,6 +176,25 @@ fun WallpaperViewScreen(
                         contentScale = previewScale,
                         modifier = Modifier.fillMaxSize()
                     )
+                }
+                FilledTonalButton(
+                    onClick = { exportFolderPicker.launch(exportFolderUri?.toUri()) },
+                    modifier = Modifier.padding(AppSpacing.medium)
+                ) {
+                    Text(if (exportFolderUri == null) "Choose export folder" else "Change export folder")
+                }
+                Text(
+                    "Edited images will also be copied to this folder automatically.",
+                    color = MaterialTheme.colorScheme.surfaceBright,
+                    modifier = Modifier.padding(horizontal = AppSpacing.medium)
+                )
+                if (exportStatus != null) {
+                    Text(
+                        exportStatus.orEmpty(),
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(AppSpacing.medium)
+                    )
+                    LaunchedEffect(exportStatus) { viewModel.consumeExportStatus() }
                 }
                 Text(
                     "Scaling for this picture",
