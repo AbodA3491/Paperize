@@ -52,10 +52,6 @@ class WallpaperSchedulerTest {
             cancelled += firstArg<String>()
             operation
         }
-        every { workManager.cancelUniquePeriodicWork(any()) } answers {
-            cancelled += firstArg<String>()
-            operation
-        }
         every { workManager.enqueueUniqueWork(any(), any<ExistingWorkPolicy>(), any<OneTimeWorkRequest>()) } answers {
             oneTimeEnqueued += Triple(firstArg(), secondArg(), thirdArg())
             operation
