@@ -111,6 +111,7 @@ dependencies {
     implementation(libs.androidx.foundation)
     implementation(libs.androidx.profileinstaller)
     implementation(libs.reorderable)
+    implementation(libs.ucrop)
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
