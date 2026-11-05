@@ -137,12 +137,12 @@ fun WallpaperScreen(
             ) {
                 ScreenToggleCard(
                     title = stringResource(R.string.lock), icon = Icons.Default.Lock, enabled = lockEnabled,
-                    onClick = { updateSettingsImmediate(scheduleSettings.copy(lockEnabled = !lockEnabled)) },
+                    onClick = { updateSettingsImmediate(scheduleSettings.copy(lockEnabled = !lockEnabled, separateSchedules = if (!lockEnabled && homeEnabled) true else scheduleSettings.separateSchedules)) },
                     modifier = Modifier.weight(1f)
                 )
                 ScreenToggleCard(
                     title = stringResource(R.string.home), icon = Icons.Default.Home, enabled = homeEnabled,
-                    onClick = { updateSettingsImmediate(scheduleSettings.copy(homeEnabled = !homeEnabled)) },
+                    onClick = { updateSettingsImmediate(scheduleSettings.copy(homeEnabled = !homeEnabled, separateSchedules = if (!homeEnabled && lockEnabled) true else scheduleSettings.separateSchedules)) },
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -187,10 +187,11 @@ fun WallpaperScreen(
         }
         if (hasAlbumSelected) {
             if (wallpaperMode == WallpaperMode.STATIC) {
-                if (!scheduleSettings.separateSchedules || !homeEnabled || !lockEnabled) {
+                if (!homeEnabled || !lockEnabled) {
                     TimeIntervalPicker(
                         title = stringResource(R.string.interval_text),
                         minutes = scheduleSettings.homeIntervalMinutes,
+                        minimumMinutes = Constants.MIN_LIVE_INTERVAL_MINUTES,
                         onMinutesChange = { minutes ->
                             updateSettingsImmediate(
                                 scheduleSettings.copy(homeIntervalMinutes = minutes, lockIntervalMinutes = minutes)
@@ -201,18 +202,20 @@ fun WallpaperScreen(
                     TimeIntervalPicker(
                         title = stringResource(R.string.lock_screen_btn),
                         minutes = scheduleSettings.lockIntervalMinutes,
+                        minimumMinutes = Constants.MIN_LIVE_INTERVAL_MINUTES,
                         onMinutesChange = { minutes ->
                             updateSettingsImmediate(
-                                scheduleSettings.copy(lockIntervalMinutes = minutes)
+                                scheduleSettings.copy(lockIntervalMinutes = minutes, separateSchedules = true)
                             )
                         }
                     )
                     TimeIntervalPicker(
                         title = stringResource(R.string.home_screen_btn),
                         minutes = scheduleSettings.homeIntervalMinutes,
+                        minimumMinutes = Constants.MIN_LIVE_INTERVAL_MINUTES,
                         onMinutesChange = { minutes ->
                             updateSettingsImmediate(
-                                scheduleSettings.copy(homeIntervalMinutes = minutes)
+                                scheduleSettings.copy(homeIntervalMinutes = minutes, separateSchedules = true)
                             )
                         }
                     )
