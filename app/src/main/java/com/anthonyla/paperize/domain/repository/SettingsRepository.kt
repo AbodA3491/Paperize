@@ -31,6 +31,11 @@ interface SettingsRepository {
 
     suspend fun clearScheduleSettings()
 
+    /** Persist the user's chosen SAF tree URI for edited-image exports. */
+    fun getEditedImageExportFolderFlow(): Flow<String?>
+
+    suspend fun updateEditedImageExportFolder(uri: String?)
+
     /** BOTH updates the home and lock selections together. */
     suspend fun updateAlbumId(screen: ScreenType, albumId: String?)
 
