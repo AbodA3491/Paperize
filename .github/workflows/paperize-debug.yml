@@ -19,12 +19,6 @@ jobs:
           distribution: temurin
           java-version: '17'
           cache: gradle
-      - name: Add Android SDK tools to PATH
-        run: echo "/usr/local/lib/android/sdk/cmdline-tools/16.0/bin" >> "$GITHUB_PATH"
-      - name: Install Android SDK
-        run: |
-          yes | sdkmanager --licenses >/dev/null
-          sdkmanager "platforms;android-37" "build-tools;36.0.0"
       - name: Run unit tests
         run: ./gradlew --no-daemon testDebugUnitTest
       - name: Build debug APK
