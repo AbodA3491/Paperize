@@ -4,11 +4,9 @@ import android.content.Context
 import android.util.Log
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.ExistingWorkPolicy
-import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import androidx.work.workDataOf
 import androidx.work.workDataOf
 import com.anthonyla.paperize.core.ScreenType
 import com.anthonyla.paperize.core.WallpaperMode
@@ -108,13 +106,17 @@ class WallpaperScheduler @Inject constructor(
                 scheduleWallpaperChange(screen, interval, onlyIfNotScheduled = onlyIfNotScheduled)
             } else {
                 workManager.cancelUniqueWork(workName(screen))
+                workManager.cancelUniquePeriodicWork(workName(screen))
             }
         }
         if (enabled) scheduleDailyAlbumRefresh(onlyIfNotScheduled) else workManager.cancelUniqueWork(Constants.WORK_NAME_REFRESH)
     }
 
     fun cancelAllWallpaperChanges() {
-        ScreenType.entries.forEach { workManager.cancelUniqueWork(workName(it)) }
+        ScreenType.entries.forEach {
+            workManager.cancelUniqueWork(workName(it))
+            workManager.cancelUniquePeriodicWork(workName(it))
+        }
         workManager.cancelUniqueWork(Constants.WORK_NAME_REFRESH)
     }
 
