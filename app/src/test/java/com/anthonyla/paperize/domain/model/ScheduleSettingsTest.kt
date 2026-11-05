@@ -21,7 +21,7 @@ class ScheduleSettingsTest {
         val validEffects = effects.copy(darkenPercentage = 100, blurPercentage = 0)
         assertEquals(
             settings.copy(
-                homeIntervalMinutes = 15,
+                homeIntervalMinutes = 5,
                 liveIntervalMinutes = 1,
                 homeEffects = validEffects,
                 lockEffects = validEffects,
