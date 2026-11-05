@@ -41,6 +41,10 @@ class WallpaperRepositoryImpl @Inject constructor(
         )
     }
 
+    override suspend fun updateWallpaperUri(wallpaperId: String, uri: String) {
+        wallpaperDao.updateWallpaperUri(wallpaperId, uri, System.currentTimeMillis())
+    }
+
     override suspend fun getAndDequeueWallpaper(albumId: String, screenType: ScreenType): Wallpaper? =
         wallpaperQueueDao.getAndDequeueWallpaper(albumId, screenType)?.toDomainModel()
 
