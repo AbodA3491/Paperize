@@ -45,6 +45,7 @@ class WallpaperScheduler @Inject constructor(
     ) {
         val interval = intervalMinutes.toLong().coerceAtLeast(Constants.MIN_LIVE_INTERVAL_MINUTES.toLong())
         if (interval < Constants.MIN_INTERVAL_MINUTES) {
+            workManager.cancelUniquePeriodicWork(workName(screenType))
             val request = OneTimeWorkRequestBuilder<WallpaperChangeWorker>()
                 .setInputData(workDataOf(Constants.EXTRA_SCREEN_TYPE to screenType.name))
                 .setInitialDelay(interval, TimeUnit.MINUTES)
