@@ -1,5 +1,10 @@
 package com.anthonyla.paperize.presentation.screens.wallpaper_view
 
+import android.app.Activity
+import android.graphics.Bitmap
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,6 +50,8 @@ import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import com.yalantis.ucrop.UCrop
+import java.io.File
 import com.anthonyla.paperize.R
 import com.anthonyla.paperize.core.ScreenType
 import com.anthonyla.paperize.core.WallpaperMode
@@ -64,6 +71,14 @@ fun WallpaperViewScreen(
     val saveCompleted by viewModel.saveCompleted.collectAsStateWithLifecycle()
     var showApplyDialog by rememberSaveable { mutableStateOf(false) }
     var scalingOverride by rememberSaveable { mutableStateOf<String?>(null) }
+    val context = LocalContext.current
+    val editLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            UCrop.getOutput(result.data ?: return@rememberLauncherForActivityResult)?.let { editedUri ->
+                viewModel.saveEditedImage(editedUri.toString())
+            }
+        }
+    }
 
     LaunchedEffect(wallpaper?.id) {
         scalingOverride = wallpaper?.scalingOverride
@@ -110,8 +125,21 @@ fun WallpaperViewScreen(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = AppSpacing.large),
                     horizontalArrangement = Arrangement.spacedBy(AppSpacing.small)
                 ) {
+                    Button(onClick = {
+                        val outputDir = File(context.filesDir, "edited_wallpapers").apply { mkdirs() }
+                        val output = Uri.fromFile(File(outputDir, "wallpaper_${wallpaper?.id ?: System.currentTimeMillis()}_${System.currentTimeMillis()}.jpg"))
+                        val options = UCrop.Options().apply {
+                            setToolbarTitle("Edit wallpaper")
+                            setFreeStyleCropEnabled(true)
+                            setCompressionFormat(Bitmap.CompressFormat.JPEG)
+                            setCompressionQuality(95)
+                        }
+                        editLauncher.launch(UCrop.of((wallpaper?.uri ?: wallpaperUri).toUri(), output).withOptions(options).getIntent(context))
+                    }, modifier = Modifier.weight(1f)) {
+                        Text("Edit image")
+                    }
                     Button(onClick = { viewModel.savePresentation(scalingOverride, 1f, 0f, 0f) }, modifier = Modifier.weight(1f)) {
-                        Text("Save image settings")
+                        Text("Save settings")
                     }
                     if (wallpaperMode == WallpaperMode.STATIC) {
                         Button(onClick = { showApplyDialog = true }, modifier = Modifier.weight(1f)) {
@@ -132,7 +160,7 @@ fun WallpaperViewScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     AsyncImage(
-                        model = wallpaperUri.toUri(),
+                        model = (wallpaper?.uri ?: wallpaperUri).toUri(),
                         contentDescription = wallpaperName,
                         contentScale = previewScale,
                         modifier = Modifier.fillMaxSize()
