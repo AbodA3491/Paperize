@@ -39,7 +39,7 @@ object Constants {
 
     // Scheduling
     const val MIN_LIVE_INTERVAL_MINUTES = 1
-    const val MIN_INTERVAL_MINUTES = 1
+    const val MIN_INTERVAL_MINUTES = 15
     const val MAX_INTERVAL_MINUTES = 43200  // 30 days in minutes
     const val DEFAULT_INTERVAL_MINUTES = 60
 
