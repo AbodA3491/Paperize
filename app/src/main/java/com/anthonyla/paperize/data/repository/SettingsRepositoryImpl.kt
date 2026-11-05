@@ -50,6 +50,7 @@ private val LOCK_SCALING_TYPE = stringPreferencesKey(PreferenceKeys.LOCK_SCALING
 private val LIVE_SCALING_TYPE = stringPreferencesKey(PreferenceKeys.LIVE_SCALING_TYPE)
 private val HOME_SCROLLING_ENABLED = booleanPreferencesKey(PreferenceKeys.HOME_SCROLLING_ENABLED)
 private val ADAPTIVE_BRIGHTNESS = booleanPreferencesKey(PreferenceKeys.ADAPTIVE_BRIGHTNESS)
+private val EDITED_IMAGE_EXPORT_FOLDER = stringPreferencesKey("edited_image_export_folder")
 
 /** Effect keys are "<screen>_<field>", e.g. "home_enable_blur" or "live_parallax_intensity". */
 private class EffectKeys(screen: String) {
@@ -137,6 +138,13 @@ class SettingsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun clearScheduleSettings() = updateScheduleSettings(ScheduleSettings())
+
+    override fun getEditedImageExportFolderFlow(): Flow<String?> =
+        dataStore.data.map { it[EDITED_IMAGE_EXPORT_FOLDER] }
+
+    override suspend fun updateEditedImageExportFolder(uri: String?) {
+        dataStore.edit { prefs -> prefs.setOrRemove(EDITED_IMAGE_EXPORT_FOLDER, uri) }
+    }
 
     override suspend fun updateAlbumId(screen: ScreenType, albumId: String?) {
         dataStore.edit { prefs -> albumIdKeys(screen).forEach { prefs.setOrRemove(it, albumId) } }
