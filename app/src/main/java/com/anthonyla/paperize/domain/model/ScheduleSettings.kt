@@ -53,8 +53,8 @@ data class ScheduleSettings(
     }
 
     fun validate(): ScheduleSettings = copy(
-        homeIntervalMinutes = homeIntervalMinutes.coerceAtLeast(Constants.MIN_INTERVAL_MINUTES),
-        lockIntervalMinutes = lockIntervalMinutes.coerceAtLeast(Constants.MIN_INTERVAL_MINUTES),
+        homeIntervalMinutes = homeIntervalMinutes.coerceIn(Constants.MIN_LIVE_INTERVAL_MINUTES, Constants.MAX_INTERVAL_MINUTES),
+        lockIntervalMinutes = lockIntervalMinutes.coerceIn(Constants.MIN_LIVE_INTERVAL_MINUTES, Constants.MAX_INTERVAL_MINUTES),
         liveIntervalMinutes = liveIntervalMinutes.coerceAtLeast(Constants.MIN_LIVE_INTERVAL_MINUTES),
         homeEffects = homeEffects.validate(),
         lockEffects = lockEffects.validate(),
