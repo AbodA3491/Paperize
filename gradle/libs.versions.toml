@@ -52,6 +52,7 @@ kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-t
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.11.0" }
 zoomable = { module = "net.engawapg.lib:zoomable", version = "2.13.0" }
 reorderable = { group = "sh.calvin.reorderable", name = "reorderable", version = "3.1.0" }
+ucrop = { module = "com.github.yalantis:ucrop", version = "2.2.8" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "androidGradlePlugin" }
