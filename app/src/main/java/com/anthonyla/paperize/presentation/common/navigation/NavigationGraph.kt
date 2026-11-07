@@ -25,6 +25,7 @@ import com.anthonyla.paperize.presentation.screens.settings.SettingsScreen
 import com.anthonyla.paperize.presentation.screens.sort.SortViewScreen
 import com.anthonyla.paperize.presentation.screens.startup.StartupScreen
 import com.anthonyla.paperize.presentation.screens.wallpaper_view.WallpaperViewScreen
+import com.anthonyla.paperize.presentation.screens.wallpaper_manager.WallpaperManagerScreen
 
 @Composable
 fun NavigationGraph(
@@ -101,6 +102,16 @@ fun NavigationGraph(
                 },
                 onNavigateToAlbum = { albumId ->
                     navController.navigate(AlbumRoute(albumId))
+                },
+                onNavigateToWallpaperManager = { navController.navigate(WallpaperManagerRoute) }
+            )
+        }
+
+        composable<WallpaperManagerRoute> {
+            WallpaperManagerScreen(
+                onBackClick = { navController.popBackStack() },
+                onOpenWallpaper = { wallpaperId, wallpaperUri, wallpaperName ->
+                    navController.navigate(WallpaperViewRoute(wallpaperId, wallpaperUri, wallpaperName))
                 }
             )
         }
