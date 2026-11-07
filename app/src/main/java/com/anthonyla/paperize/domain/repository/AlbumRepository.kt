@@ -7,6 +7,8 @@ import com.anthonyla.paperize.domain.model.Folder
 import kotlinx.coroutines.flow.Flow
 
 interface AlbumRepository {
+    fun getAllWallpapers(): Flow<List<Wallpaper>>
+
     fun getAlbumSummaries(): Flow<List<AlbumSummary>>
 
     fun getAlbumById(albumId: String): Flow<Album?>
