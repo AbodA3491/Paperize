@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.anthonyla.paperize.data.database.entities.WallpaperEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface WallpaperDao {
