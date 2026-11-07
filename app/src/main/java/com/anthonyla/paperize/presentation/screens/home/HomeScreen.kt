@@ -41,6 +41,7 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     onNavigateToSettings: () -> Unit,
     onNavigateToAlbum: (String) -> Unit,
+    onNavigateToWallpaperManager: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -64,7 +65,8 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             HomeTopBar(
-                onSettingsClick = onNavigateToSettings
+                onSettingsClick = onNavigateToSettings,
+                onManagerClick = onNavigateToWallpaperManager
             )
         }
     ) { paddingValues ->
