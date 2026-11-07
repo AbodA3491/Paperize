@@ -29,6 +29,9 @@ class AlbumRepositoryImpl @Inject constructor(
         private const val WALLPAPER_BATCH_SIZE = 500
     }
 
+    override fun getAllWallpapers(): Flow<List<Wallpaper>> =
+        wallpaperDao.getAllWallpapers().map { rows -> rows.map { it.toDomainModel() } }
+
     override fun getAlbumSummaries(): Flow<List<AlbumSummary>> =
         albumDao.getAlbumSummaries().map { it.map { summary -> summary.toDomainModel() } }
 
