@@ -9,6 +9,9 @@ import com.anthonyla.paperize.data.database.entities.WallpaperEntity
 
 @Dao
 interface WallpaperDao {
+    @Query("SELECT * FROM wallpapers ORDER BY addedAt DESC, id DESC")
+    fun getAllWallpapers(): Flow<List<WallpaperEntity>>
+
     @Query("DELETE FROM wallpapers WHERE albumId = :albumId AND id IN (:ids)")
     suspend fun deleteAlbumWallpapers(albumId: String, ids: List<String>): Int
 
