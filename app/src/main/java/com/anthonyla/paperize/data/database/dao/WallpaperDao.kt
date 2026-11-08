@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface WallpaperDao {
+    /** Streams saved wallpapers across every album for the global wallpaper manager. */
     @Query("SELECT * FROM wallpapers ORDER BY addedAt DESC, id DESC")
     fun getAllWallpapers(): Flow<List<WallpaperEntity>>
 
